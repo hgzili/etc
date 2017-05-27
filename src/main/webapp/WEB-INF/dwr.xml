@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN" "http://getahead.org/dwr/dwr20.dtd">  
+<dwr>  
+	<allow>   
+        <create creator="spring" javascript="activityService">  
+        	<param name="beanName" value="activityService"></param>  
+	            <include method="pullUpbylastActivityCdate"/>
+	            <include method="pullDownbyfirstActivityCdate"/>
+	            <include method="pullUpbylastMyActivityCdate"/>
+	            <include method="pullDownbyfirstMyActivityCdate"/>
+	            <include method="findActivityPicListByActivityId"/>  
+        </create>
+        
+        <convert converter="bean" match="com.dk.apps.etc.domain.ActivityInfo">
+        <param name="include" value="id,theme,startDate,address,endDate,introduction,cdate,cdateString,startString,endString,registeStatus,registeDeadline,registeString,status,activityPictureInfos"/>
+        </convert>
+        
+        <convert converter="bean" match="com.dk.apps.etc.domain.ActivityPictureInfo">
+        <param name="include" value="id"/>
+        </convert>
+	</allow>
+</dwr>  

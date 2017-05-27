@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="GBK"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+        	http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/aop
+			http://www.springframework.org/schema/aop/spring-aop.xsd
+            http://www.springframework.org/schema/tx
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+            http://www.springframework.org/schema/jdbc
+			http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
+            http://www.springframework.org/schema/context
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/task 
+			http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+
+	<context:property-placeholder location="classpath:jdbc.properties" />
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" 
+	    p:driverClassName="com.mysql.jdbc.Driver" 
+	    p:url="jdbc:mysql://134.119.18.93:3306/test?useUnicode=true&amp;autoReconnect=true&amp;characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull" 
+	    p:username="root" 
+	    p:password="nippons161219"
+		p:initialSize="${initialSize}" 
+		p:maxActive="${maxActive}" 
+		p:maxIdle="${maxIdle}" 
+		p:minIdle="${minIdle}" />
+
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource"><ref bean="dataSource"/></property>
+		<property name="mappingResources">
+			<list>
+			    <!-->value>com/cci/apps/lerp/domain/Entity.hbm.xml</value-->
+			</list>
+		</property>
+	 	<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.query.substitutions">true 1, false 0</prop>
+				<prop key="hibernate.autoReconnect">true</prop>
+			</props>
+		</property>
+		<property name="packagesToScan">
+			<list>
+			<value>com/dk/apps/etc/domain</value>
+			</list>
+		</property>
+		<property name="namingStrategy">
+            <bean class="org.hibernate.cfg.ImprovedNamingStrategy" />
+        </property>
+	</bean>
+	
+	<!-- Transaction manager for a single Hibernate SessionFactory (alternative to JTA) -->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory"><ref bean="sessionFactory"/></property>
+	</bean>
+	    <bean id="baseTxProxy" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean" lazy-init="true">
+        <property name="transactionManager"><ref bean="transactionManager"/></property>
+        <property name="transactionAttributes">
+            <props>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>                
+				<prop key="sync*">PROPAGATION_REQUIRED</prop>
+				<prop key="MessageDistribute">PROPAGATION_REQUIRED</prop>
+				<prop key="create*">PROPAGATION_REQUIRED</prop>
+				<prop key="send*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    
+	<!--注册注解项 -->
+	<context:component-scan base-package="com.dk.apps.etc" />
+	<tx:annotation-driven />
+
+	<!-- enable autowire -->
+	<context:annotation-config />
+	
+	<!-- Enables the Spring Task @Scheduled programming model -->  
+    <task:executor id="executor" pool-size="5" />  
+    <task:scheduler id="scheduler" pool-size="10" />  
+    <task:annotation-driven executor="executor" scheduler="scheduler" /> 
+</beans>

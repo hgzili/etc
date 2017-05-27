@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+	
+<struts>
+	<constant name="struts.objectFacotry" value="spring"/>
+	<constant name="struts.devMode" value="false"/>
+	<constant name="struts.convention.action.mapAllMatches" value="true"/>
+	<constant name="struts.convention.classes.reload" value="false"/>
+	<constant name="struts.action.excludePattern" value="/index.html,/dwr/.*"/>
+	<constant name="struts.i18n.encoding" value="utf-8"/>
+	<constant name="struts.multipart.maxSize" value="31457280"/>
+	<constant name="struts.multipart.saveDir" value="/tmp"/>
+	
+	
+	<package name="default" extends="struts-default" namespace="/">  
+		<interceptors>  
+		   	<interceptor name="login" class="com.dk.apps.etc.util.LoginInterceptor"/>   
+		   	<interceptor name="servlet-config" class="org.apache.struts2.interceptor.ServletConfigInterceptor"/>
+		   	<interceptor name="params" class="com.opensymphony.xwork2.interceptor.ParametersInterceptor">
+				<param name="trimFlag">false</param>
+			</interceptor> 
+			<interceptor name="myparams" class="com.dk.apps.etc.util.ParametersInterceptor"/>
+			<interceptor name="exception" class="com.dk.apps.etc.util.ExceptionInterceptor"/>  
+			
+		   	<interceptor-stack name="baseStack">  
+				<interceptor-ref name="login"/>  
+		    	<interceptor-ref name="defaultStack"/>  
+		    	<interceptor-ref name="myparams"/>  
+		    	<interceptor-ref name="exception"/>  
+		   	</interceptor-stack>  
+	  	</interceptors>  
+
+	  	<default-interceptor-ref name="baseStack"/>  
+	  	<global-results>  
+	   		<result name="login" type="redirect">/login/viewLogin.action</result> 
+	   		<result name="changePassword" type="redirect">/login/updatePassword.action</result>
+	   		<result name="accountInvalid" type="redirect">/exception/accountInvalid.action</result>  
+	   		<result name="error">/error.jsp</result>
+	   		<result name="pcexception" type="redirect">/exception/systemCrash.action</result>
+	   		<result name="mobileexception" type="redirect">/mobile/systemCrash.action</result>  
+	   		<result name="noUserLogin" type="freemarker">/mobile/noUserLogin.ftl</result>
+	   		<result name="noAccountInfo" type="freemarker">/mobile/account/noAccountInfo.ftl</result>    
+		</global-results>
+	</package>  
+	
+	<package name="etc" extends="default"> 
+    </package>
+    
+	<package name="json-default" extends="default">
+		<result-types>
+			<result-type name="json" class="org.apache.struts2.json.JSONResult"/>
+			<result-type name="stream" class=" org.apache.struts2.dispatcher.StreamResult"/>
+		</result-types>
+		
+		<interceptors>
+			<interceptor name="json" class="org.apache.struts2.json.JSONInterceptor"/>
+		</interceptors>
+	</package>
+	<constant name="struts.action.extension" value="action" />
+	
+</struts>
