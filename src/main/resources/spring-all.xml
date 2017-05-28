@@ -21,10 +21,10 @@
 	<context:property-placeholder location="classpath:jdbc.properties" />
 
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" 
-	    p:driverClassName="com.mysql.jdbc.Driver" 
-	    p:url="jdbc:mysql://134.119.18.93:3306/test?useUnicode=true&amp;autoReconnect=true&amp;characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull" 
-	    p:username="root" 
-	    p:password="nippons161219"
+	    p:driverClassName="${driverClassName}" 
+	    p:url="${surl}" 
+	    p:username="${susername}" 
+	    p:password="${spassword}"
 		p:initialSize="${initialSize}" 
 		p:maxActive="${maxActive}" 
 		p:maxIdle="${maxIdle}" 
