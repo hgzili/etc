@@ -9,7 +9,7 @@ import com.dk.apps.etc.domain.BaseTable;
 
 
 @Entity
-@Table(name="tickerTable")
+@Table(name="ticker")
 public class TickerTable extends BaseTable{
 	private Date date;
     private Double high;
