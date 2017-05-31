@@ -16,7 +16,7 @@ public class etcTest extends AbstractTransactionalJUnit4SpringContextTests{
 	@Test
 	public void testGetTicker() {
 		EtcUtil.getDepth();
-		//1
+		//2
 //		TickerTable tickerTable = EtcUtil.getTicker();
 //		etcService.saveOrUpdateTickerTable(tickerTable);
 	}
