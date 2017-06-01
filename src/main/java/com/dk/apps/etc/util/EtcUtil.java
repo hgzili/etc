@@ -62,7 +62,6 @@ public class EtcUtil {
 	/**
 	 * 获取深度
 	 */
-	@Test
 	public static JSONObject getDepth() {
 		try {
 			String url = API_DOMAIN+"/data/v1/depth?currency="+currency;
@@ -73,7 +72,53 @@ public class EtcUtil {
 			return null;
 		}
 	}
+	
+	/**
+	 * 获取最近交易记录
+	 * since 从指定交易ID后50条数据
+	 */
+	public static JSONObject getTrades(String tid) {
+		try {
+			String url = API_DOMAIN+"/data/v1/trades?currency="+currency+"&since="+tid;
+			JSONObject callback = get(url, "UTF-8");
+			return callback;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
 
+	/**
+	 * 获取K线数据
+	 * type
+			1min : 1分钟
+			3min : 3分钟
+			5min : 5分钟
+			15min : 15分钟
+			30min : 30分钟
+			1day : 1日
+			3day : 3日
+			1week : 1周
+			1hour : 1小时
+			2hour : 2小时
+			4hour : 4小时
+			6hour : 6小时
+			12hour : 12小时
+		since	
+			从这个时间戳之后的
+	 */
+	public static JSONObject getKline(String type,Date since) {
+		try {
+			String url = API_DOMAIN+"/data/v1/kline?currency="+currency+"&type="+type+"&since="+since.toString();
+			JSONObject callback = get(url, "UTF-8");
+			return callback;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+	
+	
 	public static JSONObject get(String urlAll, String charset) {
 		BufferedReader reader = null;
 		JSONObject result = null;
