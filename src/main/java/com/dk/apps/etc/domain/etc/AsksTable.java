@@ -13,7 +13,7 @@ import com.dk.apps.etc.domain.BaseTable;
 public class AsksTable extends BaseTable{
 	private Date date;
     private Double price;
-    private Double qty;
+    private Double amount;
     private Date udate;
 	public Date getDate() {
 		return date;
@@ -27,11 +27,11 @@ public class AsksTable extends BaseTable{
 	public void setPrice(Double price) {
 		this.price = price;
 	}
-	public Double getQty() {
-		return qty;
+	public Double getAmount() {
+		return amount;
 	}
-	public void setQty(Double qty) {
-		this.qty = qty;
+	public void setAmount(Double amount) {
+		this.amount = amount;
 	}
 	public Date getUdate() {
 		return udate;

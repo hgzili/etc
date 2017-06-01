@@ -43,7 +43,7 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 			AsksTable asksTable = new AsksTable();
 			asksTable.setDate(depth.getTimestamp());
 			asksTable.setPrice(asks[i][0]);
-			asksTable.setQty(asks[i][1]);
+			asksTable.setAmount(asks[i][1]);
 			asksTable.setUdate(new Date());
 			saveOrUpdateAsksTable(asksTable);
 		}
@@ -52,7 +52,7 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 			BidsTable bidsTable = new BidsTable();
 			bidsTable.setDate(depth.getTimestamp());
 			bidsTable.setPrice(bids[i][0]);
-			bidsTable.setQty(bids[i][1]);
+			bidsTable.setAmount(bids[i][1]);
 			bidsTable.setUdate(new Date());
 			saveOrUpdateBidsTable(bidsTable);
 		}
