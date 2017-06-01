@@ -7,23 +7,30 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.dk.apps.etc.service.EtcService;
+
 @Component
 public class SpringTasks{
 	@Resource(name = "etcService")
-	protected com.dk.apps.etc.service.etcService etcService;
+	protected EtcService etcService;
 	
 	private static Log log = LogFactory.getLog(SpringTasks.class);
 	
 	@Scheduled(cron = "0 * * * * *")  
-    void clearContactTarget(){  
+    void syncTicker(){  
 		etcService.syncTicker();;
     }
+	
+	@Scheduled(cron = "30 * * * * *")  
+    void syncDepth(){  
+		etcService.syncDepth();
+    }
 
-	public com.dk.apps.etc.service.etcService getEtcService() {
+	public EtcService getEtcService() {
 		return etcService;
 	}
 
-	public void setEtcService(com.dk.apps.etc.service.etcService etcService) {
+	public void setEtcService(EtcService etcService) {
 		this.etcService = etcService;
 	}
 }

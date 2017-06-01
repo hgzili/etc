@@ -17,7 +17,7 @@ import com.dk.apps.etc.domain.AccountInfo;
 import com.dk.apps.etc.domain.UserLogin;
 import com.dk.apps.etc.service.AdminService;
 import com.dk.apps.etc.service.LoginService;
-import com.dk.apps.etc.service.etcService;
+import com.dk.apps.etc.service.EtcService;
 import com.dk.apps.etc.util.Constants;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
@@ -36,7 +36,7 @@ public class BaseAction extends ActionSupport {
 	protected LoginService loginService;
 
 	@Resource(name = "etcService")
-	protected etcService etcService;
+	protected EtcService etcService;
 
 	@Action(value = "index", results = { @Result(name = "success", type = "freemarker", location = "/index.ftl") })
 	public String index() {

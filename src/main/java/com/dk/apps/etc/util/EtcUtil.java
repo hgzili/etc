@@ -5,21 +5,22 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.struts2.ServletActionContext;
 import org.junit.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.dk.apps.etc.domain.etc.AsksTable;
+import com.dk.apps.etc.domain.etc.BidsTable;
 import com.dk.apps.etc.domain.etc.TickerTable;
 import com.dk.apps.etc.domain.etc.dummy.Depth;
 import com.dk.apps.etc.domain.etc.dummy.Ticker;
-import com.sun.org.apache.xerces.internal.xs.datatypes.ObjectList;
+import com.dk.apps.etc.service.EtcService;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
@@ -27,12 +28,12 @@ import net.sf.json.JSONObject;
  * @author Wayne
  * @date 2015-01-16
  */
+@SuppressWarnings("static-access")
 public class EtcUtil {
 	private static Log log = LogFactory.getLog(EtcUtil.class);
 	public static String API_DOMAIN = "http://api.chbtc.com";
 	private static String currency = "etc_cny";
 
-	@SuppressWarnings("static-access")
 	/**
 	 * 获取行情
 	 */
@@ -62,22 +63,14 @@ public class EtcUtil {
 	 * 获取深度
 	 */
 	@Test
-	public static void getDepth() {
+	public static JSONObject getDepth() {
 		try {
 			String url = API_DOMAIN+"/data/v1/depth?currency="+currency;
 			JSONObject callback = get(url, "UTF-8");
-			JSONArray asks_list = callback.getJSONArray("asks");
-			JSONArray bids_list = callback.getJSONArray("bids"); 
-//			
-
-			Depth depth = (Depth) callback.toBean(callback, Depth.class);
-			Double[][] asks = depth.getAsks();
-			Double[][] bids = depth.getBids();
-			for(int i=0; i<asks.length; i++){
-				Double[] ask = asks[i];
-			}
+			return callback;
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			return null;
 		}
 	}
 
