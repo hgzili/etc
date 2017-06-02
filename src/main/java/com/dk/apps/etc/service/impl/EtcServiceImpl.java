@@ -2,6 +2,7 @@ package com.dk.apps.etc.service.impl;
 
 import java.util.Date;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
@@ -12,7 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dk.apps.etc.domain.etc.AsksTable;
 import com.dk.apps.etc.domain.etc.BidsTable;
 import com.dk.apps.etc.domain.etc.TickerTable;
+import com.dk.apps.etc.domain.etc.TradesBuyTable;
+import com.dk.apps.etc.domain.etc.TradesSellTable;
 import com.dk.apps.etc.domain.etc.dummy.Depth;
+import com.dk.apps.etc.domain.etc.dummy.Trades;
 import com.dk.apps.etc.service.EtcService;
 import com.dk.apps.etc.util.EtcUtil;
 
@@ -35,7 +39,6 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 	public void syncDepth(){
 		JSONObject callback = EtcUtil.getDepth();
 		Depth depth = (Depth) callback.toBean(callback, Depth.class);
-		System.out.println(depth.toString());
 		Double[][] asks = depth.getAsks();
 		Double[][] bids = depth.getBids();
 		
@@ -64,5 +67,39 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 	
 	public void saveOrUpdateBidsTable(BidsTable bidsTable){
 		this.getSessionFactory().getCurrentSession().saveOrUpdate(bidsTable);
+	}
+	
+	public void syncTrades(){
+		JSONObject callback = EtcUtil.getTrades(null);
+		JSONArray list = JSONArray.fromObject(callback);
+		for(int i=0; i<list.size(); i++){
+			JSONObject jsonObject = list.getJSONObject(i); 
+			Trades trades = (Trades) callback.toBean(jsonObject, Trades.class);
+			if(trades.getType().equals("buy")){
+				TradesBuyTable tradesBuy = new TradesBuyTable();
+				tradesBuy.setTid(trades.getTid());
+				tradesBuy.setDate(trades.getDate());
+				tradesBuy.setPrice(trades.getPrice());
+				tradesBuy.setAmount(trades.getAmount());
+				tradesBuy.setUdate(new Date());
+				saveOrUpdateTradesBuyTable(tradesBuy);
+			}else{
+				TradesSellTable tradesSell = new TradesSellTable();
+				tradesSell.setTid(trades.getTid());
+				tradesSell.setDate(trades.getDate());
+				tradesSell.setPrice(trades.getPrice());
+				tradesSell.setAmount(trades.getAmount());
+				tradesSell.setUdate(new Date());
+				saveOrUpdateTradesSellTable(tradesSell);
+			}
+		}		
+	}
+	
+	public void saveOrUpdateTradesBuyTable(TradesBuyTable tradesBuyTable){
+		this.getSessionFactory().getCurrentSession().saveOrUpdate(tradesBuyTable);
+	}
+	
+	public void saveOrUpdateTradesSellTable(TradesSellTable tradesSellTable){
+		this.getSessionFactory().getCurrentSession().saveOrUpdate(tradesSellTable);
 	}
 }

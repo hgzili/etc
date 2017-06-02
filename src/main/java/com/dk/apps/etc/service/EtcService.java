@@ -3,12 +3,18 @@ package com.dk.apps.etc.service;
 import com.dk.apps.etc.domain.etc.AsksTable;
 import com.dk.apps.etc.domain.etc.BidsTable;
 import com.dk.apps.etc.domain.etc.TickerTable;
+import com.dk.apps.etc.domain.etc.TradesBuyTable;
+import com.dk.apps.etc.domain.etc.TradesSellTable;
 
 public interface EtcService {
-	public void saveOrUpdateTickerTable(TickerTable tickerTable);
 	public void syncTicker();
+	public void saveOrUpdateTickerTable(TickerTable tickerTable);
 	
 	public void syncDepth();
 	public void saveOrUpdateAsksTable(AsksTable asksTable);
 	public void saveOrUpdateBidsTable(BidsTable bidsTable);
+	
+	public void syncTrades();
+	public void saveOrUpdateTradesBuyTable(TradesBuyTable tradesBuyTable);
+	public void saveOrUpdateTradesSellTable(TradesSellTable tradesSellTable);
 }

@@ -79,7 +79,8 @@ public class EtcUtil {
 	 */
 	public static JSONObject getTrades(String tid) {
 		try {
-			String url = API_DOMAIN+"/data/v1/trades?currency="+currency+"&since="+tid;
+			String url = API_DOMAIN+"/data/v1/trades?currency="+currency;
+			if(tid != null) url = url +"&since="+tid;
 			JSONObject callback = get(url, "UTF-8");
 			return callback;
 		} catch (Exception ex) {
