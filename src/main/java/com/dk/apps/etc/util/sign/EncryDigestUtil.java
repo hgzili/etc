@@ -10,9 +10,9 @@ public class EncryDigestUtil {
 	private static String encodingCharset = "UTF-8";
 	
 	/**
-	 * ç”Ÿæˆç­¾åæ¶ˆæ¯
-	 * @param aValue  è¦ç­¾åçš„å­—ç¬¦ä¸²
-	 * @param aKey  ç­¾åå¯†é’¥
+	 * Éú³ÉÇ©ÃûÏûÏ¢
+	 * @param aValue  ÒªÇ©ÃûµÄ×Ö·û´®
+	 * @param aKey  Ç©ÃûÃÜÔ¿
 	 * @return
 	 */
 	public static String hmacSign(String aValue, String aKey) {
@@ -106,8 +106,4 @@ public class EncryDigestUtil {
 		return toHex(md.digest(value));
 
 	}
-	
-//	public static void main(String[] args) {
-//		System.out.println(hmacSign("AnnulCard1000043252120080620160450.0http://localhost/SZXpro/callback.aspï¿½?4564868265473632445648682654736324511","8UPp0KE8sq73zVP370vko7C39403rtK1YwX40Td6irH216036H27Eb12792t"));
-//	}
 }
