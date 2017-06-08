@@ -9,17 +9,11 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts2.ServletActionContext;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import com.dk.apps.etc.domain.etc.AsksTable;
-import com.dk.apps.etc.domain.etc.BidsTable;
 import com.dk.apps.etc.domain.etc.TickerTable;
-import com.dk.apps.etc.domain.etc.dummy.Depth;
 import com.dk.apps.etc.domain.etc.dummy.Ticker;
-import com.dk.apps.etc.service.EtcService;
+import com.dk.apps.etc.util.sign.EncryDigestUtil;
 
 import net.sf.json.JSONObject;
 
@@ -31,9 +25,34 @@ import net.sf.json.JSONObject;
 @SuppressWarnings("static-access")
 public class EtcUtil {
 	private static Log log = LogFactory.getLog(EtcUtil.class);
-	public static String API_DOMAIN = "http://api.chbtc.com";
 	private static String currency = "etc_cny";
 
+	public static String URL_PREFIX = "https://trade.chbtc.com/api/";
+	
+	/**
+	 * 委托下单
+	 * tradeType 1买，0卖
+	 */
+	@Test
+	public void testOrder(String accessKey,String secretKey,String price,String amount,String tradeType){
+		try{
+			String SECRET_KEY = EncryDigestUtil.digest(secretKey);
+			//需加密的请求参数， tradeType=0卖单
+			String params = "method=order&accesskey="+accessKey+"&price="+price+"&amount="+amount+"&tradeType="+tradeType+"&currency="+currency;
+			//参数执行加密
+			String hash = EncryDigestUtil.hmacSign(params, SECRET_KEY);
+			//请求地址
+			String url = URL_PREFIX+"order?" + params + "&sign=" + hash + "&reqTime=" + System.currentTimeMillis();
+//			System.out.println("testOrder url: " + url);
+			//请求测试
+			JSONObject callback = get(url, "UTF-8");
+//			System.out.println("testOrder 结果: " + callback);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	
+	public static String API_DOMAIN = "http://api.chbtc.com";
 	/**
 	 * 获取行情
 	 */
