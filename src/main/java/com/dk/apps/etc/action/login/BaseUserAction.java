@@ -51,8 +51,8 @@ public class BaseUserAction extends BaseAction{
 				addActionError(Constants.ERROR_MSG3);
 			}else{
 				Encoder encoder = new Encoder();
-				accountInfo.setPassword(encoder.encodePassword(newPassword));
-				accountInfo.setLastChangePassword(new Date());
+//				accountInfo.setPassword(encoder.encodePassword(newPassword));
+//				accountInfo.setLastChangePassword(new Date());
 				this.adminService.saveOrUpdateAccountInfo(accountInfo);
 			}
 		}catch(Exception e){

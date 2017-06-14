@@ -31,7 +31,7 @@ public class AccountMaintenance extends BaseAction{
 	public String accountMaintenance(){
 		AccountInfo userLogin = this.getUserLogin().getAccountInfo();
 		if(userLogin == null) return "nopermission";
-		if(!userLogin.getRole().equals(Constants.ROLE_ADMIN)) return "nopermission";
+//		if(!userLogin.getRole().equals(Constants.ROLE_ADMIN)) return "nopermission";
 		
 		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
 		Calendar cal=Calendar.getInstance(); 
@@ -62,19 +62,19 @@ public class AccountMaintenance extends BaseAction{
 		Encoder encoder = new Encoder();
 		AccountInfo accountInfo = new AccountInfo();
 		accountInfo.setAccount(account);
-		accountInfo.setEmail(email);
-		accountInfo.setPassword(encoder.encodePassword(password));
-		accountInfo.setRole(role);
-		accountInfo.setActive(true);
-		accountInfo.setUdateBy(this.getUserLogin().getAccountInfo().getId());
-		accountInfo.setUpdateAt(new Date());
-		accountInfo.setStartDate(startDate);
-		if(endDate!=null){
-			endDate.setHours(23);
-			endDate.setMinutes(59);
-			endDate.setSeconds(59);
-			accountInfo.setEndDate(endDate);
-		}
+//		accountInfo.setEmail(email);
+//		accountInfo.setPassword(encoder.encodePassword(password));
+//		accountInfo.setRole(role);
+//		accountInfo.setActive(true);
+//		accountInfo.setUdateBy(this.getUserLogin().getAccountInfo().getId());
+//		accountInfo.setUpdateAt(new Date());
+//		accountInfo.setStartDate(startDate);
+//		if(endDate!=null){
+//			endDate.setHours(23);
+//			endDate.setMinutes(59);
+//			endDate.setSeconds(59);
+//			accountInfo.setEndDate(endDate);
+//		}
 		this.adminService.saveOrUpdateAccountInfo(accountInfo);
 		return SUCCESS;
 	}
@@ -85,18 +85,14 @@ public class AccountMaintenance extends BaseAction{
 			@Result(name = "error",location = "/admin/accountMaintenance.ftl"),
 			@Result(name = "nopermission",location = "/nopermission.ftl") })
 	public String updateAccountInfoActive() throws Exception{
-		if(this.adminService.isExitedAccountInfo(account,accountInfoId)){
-			addActionError(Constants.ERROR_DUPLICATE_ACCOUNT);
-			return ERROR;
-		}
 		AccountInfo accountInfo = this.adminService.getAccountInfoById(accountInfoId);
 		if(accountInfo==null){
 			return "nopermission";
 		}
 		
-		accountInfo.setActive(active);
-		accountInfo.setUdateBy(this.getUserLogin().getAccountInfo().getId());
-		accountInfo.setUpdateAt(new Date());
+//		accountInfo.setActive(active);
+//		accountInfo.setUdateBy(this.getUserLogin().getAccountInfo().getId());
+//		accountInfo.setUpdateAt(new Date());
 		this.adminService.saveOrUpdateAccountInfo(accountInfo);
 		return SUCCESS;
 	}
@@ -106,27 +102,23 @@ public class AccountMaintenance extends BaseAction{
 			@Result(name = "error",location = "/admin/accountMaintenance.ftl"),
 			@Result(name = "nopermission",location = "/nopermission.ftl")})
 	public String updateAccountInfo() throws Exception{
-		if(this.adminService.isExitedAccountInfo(account,accountInfoId)){
-			addActionError(Constants.ERROR_DUPLICATE_ACCOUNT);
-			return ERROR;
-		}
 		AccountInfo accountInfo = this.adminService.getAccountInfoById(accountInfoId);
 		if(accountInfo==null){
 			return "nopermission";
 		}
 
 		accountInfo.setAccount(account);
-		accountInfo.setEmail(email);
-		accountInfo.setRole(role);
-		accountInfo.setUdateBy(this.getUserLogin().getAccountInfo().getId());
-		accountInfo.setUpdateAt(new Date());
-		accountInfo.setStartDate(startDate);
-		if(endDate!=null){
-			endDate.setHours(23);
-			endDate.setMinutes(59);
-			endDate.setSeconds(59);
-		}
-		accountInfo.setEndDate(endDate);
+//		accountInfo.setEmail(email);
+//		accountInfo.setRole(role);
+//		accountInfo.setUdateBy(this.getUserLogin().getAccountInfo().getId());
+//		accountInfo.setUpdateAt(new Date());
+//		accountInfo.setStartDate(startDate);
+//		if(endDate!=null){
+//			endDate.setHours(23);
+//			endDate.setMinutes(59);
+//			endDate.setSeconds(59);
+//		}
+//		accountInfo.setEndDate(endDate);
 		this.adminService.saveOrUpdateAccountInfo(accountInfo);
 		return SUCCESS;
 	}

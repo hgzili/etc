@@ -2,6 +2,8 @@ package com.dk.apps.etc.service.impl;
 
 import java.util.Date;
 
+import javax.annotation.Resource;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -10,13 +12,17 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dk.apps.etc.domain.AccountInfo;
 import com.dk.apps.etc.domain.etc.AsksTable;
 import com.dk.apps.etc.domain.etc.BidsTable;
+import com.dk.apps.etc.domain.etc.OrderBuyTable;
+import com.dk.apps.etc.domain.etc.OrderSellTable;
 import com.dk.apps.etc.domain.etc.TickerTable;
 import com.dk.apps.etc.domain.etc.TradesBuyTable;
 import com.dk.apps.etc.domain.etc.TradesSellTable;
 import com.dk.apps.etc.domain.etc.dummy.Depth;
 import com.dk.apps.etc.domain.etc.dummy.Trades;
+import com.dk.apps.etc.service.AdminService;
 import com.dk.apps.etc.service.EtcService;
 import com.dk.apps.etc.util.EtcUtil;
 
@@ -24,6 +30,9 @@ import com.dk.apps.etc.util.EtcUtil;
 @Transactional
 @Service("etcService")
 public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
+	@Resource(name = "adminService")
+	private AdminService adminService;
+	
 	@SuppressWarnings("unused")
 	private static Log log = LogFactory.getLog(EtcServiceImpl.class);
 	
@@ -101,5 +110,34 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 	
 	public void saveOrUpdateTradesSellTable(TradesSellTable tradesSellTable){
 		this.getSessionFactory().getCurrentSession().saveOrUpdate(tradesSellTable);
+	}
+	
+	public void syncOrdersNew(String account){
+		AccountInfo accountInfo = this.adminService.getAccountInfoByAccount(account);
+		String accessKey = accountInfo.getAccessKey();
+		String secretKey = accountInfo.getSecretKey();
+		JSONObject callbackBuy = EtcUtil.getOrdersNew(accessKey,secretKey,"1");
+		JSONArray buyList = JSONArray.fromObject(callbackBuy);
+		for(int i=0; i<buyList.size(); i++){
+			JSONObject jsonObject = buyList.getJSONObject(i); 
+			OrderBuyTable orderBuy = (OrderBuyTable) callbackBuy.toBean(jsonObject, OrderBuyTable.class);
+			saveOrUpdateOrderBuyTable(orderBuy);
+		}	
+		
+		JSONObject callbackSell = EtcUtil.getOrdersNew(accessKey,secretKey,"0");
+		JSONArray sellList = JSONArray.fromObject(callbackSell);
+		for(int i=0; i<sellList.size(); i++){
+			JSONObject jsonObject = sellList.getJSONObject(i); 
+			OrderSellTable orderSell = (OrderSellTable) callbackSell.toBean(jsonObject, OrderSellTable.class);
+			saveOrUpdateOrderSellTable(orderSell);
+		}	
+	}
+	
+	public void saveOrUpdateOrderBuyTable(OrderBuyTable orderBuyTable){
+		this.getSessionFactory().getCurrentSession().saveOrUpdate(orderBuyTable);
+	}
+	
+	public void saveOrUpdateOrderSellTable(OrderSellTable orderSellTable){
+		this.getSessionFactory().getCurrentSession().saveOrUpdate(orderSellTable);
 	}
 }

@@ -21,10 +21,10 @@ public class LoginServiceImpl extends BaseDaoHibernate implements LoginService{
 	
 	public AccountInfo getAccountInfo(String account, String password) throws Exception{
 		AccountInfo accountInfo = this.adminService.getAccountInfoByAccount(account);
-		if (accountInfo == null || accountInfo.getActive() == false) throw new Exception(Constants.ERROR_MSG2);
-		Encoder encoder = new Encoder();
-		String loginPassword = encoder.encodePassword(password);
-		if (!accountInfo.getPassword().equals(loginPassword)) throw new Exception(Constants.ERROR_MSG3);
+//		if (accountInfo == null || accountInfo.getActive() == false) throw new Exception(Constants.ERROR_MSG2);
+//		Encoder encoder = new Encoder();
+//		String loginPassword = encoder.encodePassword(password);
+//		if (!accountInfo.getPassword().equals(loginPassword)) throw new Exception(Constants.ERROR_MSG3);
 		return accountInfo;
 	}
 	

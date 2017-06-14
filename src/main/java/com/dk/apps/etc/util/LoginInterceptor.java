@@ -34,9 +34,9 @@ public class LoginInterceptor implements Interceptor {
     			UserLogin userLogin = (UserLogin) getSession().get(Constants.USER_LOGIN);
     			if(!(invocation.getAction() instanceof com.dk.apps.etc.action.login.BaseUserAction)){
     				if (userLogin.getAccountInfo() == null) return Action.LOGIN;
-    				if (userLogin != null && userLogin.getAccountInfo().getLastChangePassword()==null){ 
-						return "changePassword";
-    				}
+//    				if (userLogin != null && userLogin.getAccountInfo().getLastChangePassword()==null){ 
+//						return "changePassword";
+//    				}
     			}
         	}
         	

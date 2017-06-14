@@ -34,7 +34,7 @@ public class EtcUtil {
 	 * tradeType 1买，0卖
 	 */
 	@Test
-	public void testOrder(String accessKey,String secretKey,String price,String amount,String tradeType){
+	public JSONObject order(String accessKey,String secretKey,String price,String amount,String tradeType){
 		try{
 			String SECRET_KEY = EncryDigestUtil.digest(secretKey);
 			//需加密的请求参数， tradeType=0卖单
@@ -46,10 +46,63 @@ public class EtcUtil {
 //			System.out.println("testOrder url: " + url);
 			//请求测试
 			JSONObject callback = get(url, "UTF-8");
+			return callback;
 //			System.out.println("testOrder 结果: " + callback);
 		}catch(Exception ex){
 			ex.printStackTrace();
+			return null;
 		}
+	}
+	
+	/**
+	 * 取消委托
+	 */
+	@Test
+	public JSONObject cancelOrder(String accessKey,String secretKey,String orderId){
+		try{
+			String SECRET_KEY = EncryDigestUtil.digest(secretKey);
+			//需加密的请求参数
+			String params = "method=cancelOrder&accesskey="+accessKey + "&id=" + orderId + "&currency="+currency;;
+			//参数执行加密
+			String hash = EncryDigestUtil.hmacSign(params, SECRET_KEY);
+			//请求地址
+			String url = URL_PREFIX+"cancelOrder?" + params + "&sign=" + hash + "&reqTime=" + System.currentTimeMillis();
+			//请求测试
+			JSONObject callback = get(url, "UTF-8");
+			return callback;
+		}catch(Exception ex){
+			ex.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * (新)获取多个委托买单或卖单，每次请求返回pageSize<=100条记录
+	 * 	tradeType 交易类型1/0[buy/sell]
+	 * pageIndex 当前页数
+	 * pageSize  每页数量
+	 */
+	@Test
+	public static JSONObject getOrdersNew(String accessKey,String secretKey,String tradeType){
+		try{
+			String SECRET_KEY = EncryDigestUtil.digest(secretKey);	
+			//需加密的请求参数
+			String params = "method=getOrdersNew&accesskey="+accessKey 
+					+ "&tradeType="+tradeType
+					+ "&currency="+currency
+					+ "&pageIndex=1&pageSize=100";
+			//参数执行加密
+			String hash = EncryDigestUtil.hmacSign(params, SECRET_KEY);
+			//请求地址
+			String url = URL_PREFIX+"getOrdersNew?" + params + "&sign=" + hash + "&reqTime=" + System.currentTimeMillis();
+			//请求测试
+			JSONObject callback = get(url, "UTF-8");
+			return callback;
+		}catch(Exception ex){
+			ex.printStackTrace();
+			return null;
+		}
+		
 	}
 	
 	public static String API_DOMAIN = "http://api.chbtc.com";
