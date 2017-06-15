@@ -12,12 +12,14 @@ public class BaseTable {
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @GenericGenerator(name = "paymentableGenerator", strategy = "native")
-	private Long id;
+	private Long uuid;
+
+	public Long getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(Long uuid) {
+		this.uuid = uuid;
+	}
     
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
 }

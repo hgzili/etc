@@ -11,12 +11,13 @@ import com.dk.apps.etc.util.EtcUtil;
 @ContextConfiguration(locations={"spring.xml"})
 public class etcTest extends AbstractTransactionalJUnit4SpringContextTests{
 	@Autowired
-	private EtcService EtcService; 
+	private EtcService etcService; 
 
 	@Test
 	public void testGetTicker() {
 //		EtcUtil.getDepth();
-		EtcService.syncDepth();
+//		EtcService.syncDepth();
+		etcService.syncOrdersNew("1");
 		//5
 //		TickerTable tickerTable = EtcUtil.getTicker();
 //		etcService.saveOrUpdateTickerTable(tickerTable);

@@ -18,12 +18,17 @@ public class SpringTasks{
 	
 	@Scheduled(cron = "0 * * * * *")  
     void syncTicker(){  
-		etcService.syncTicker();;
+//		etcService.syncTicker();;
     }
 	
 	@Scheduled(cron = "30 * * * * *")  
     void syncDepth(){  
-		etcService.syncDepth();
+//		etcService.syncDepth();
+    }
+	
+	@Scheduled(cron = "0 * * * * *")  
+    void syncOrdersNew(){  
+//		etcService.syncOrdersNew("1");;
     }
 
 	public EtcService getEtcService() {

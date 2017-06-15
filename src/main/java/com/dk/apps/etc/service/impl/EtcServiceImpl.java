@@ -116,28 +116,46 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 		AccountInfo accountInfo = this.adminService.getAccountInfoByAccount(account);
 		String accessKey = accountInfo.getAccessKey();
 		String secretKey = accountInfo.getSecretKey();
-		JSONObject callbackBuy = EtcUtil.getOrdersNew(accessKey,secretKey,"1");
-		JSONArray buyList = JSONArray.fromObject(callbackBuy);
+		JSONArray buyList = EtcUtil.getOrdersNew(accessKey,secretKey,"1");
 		for(int i=0; i<buyList.size(); i++){
 			JSONObject jsonObject = buyList.getJSONObject(i); 
-			OrderBuyTable orderBuy = (OrderBuyTable) callbackBuy.toBean(jsonObject, OrderBuyTable.class);
+			OrderBuyTable orderBuy = (OrderBuyTable) jsonObject.toBean(jsonObject, OrderBuyTable.class);
 			saveOrUpdateOrderBuyTable(orderBuy);
 		}	
 		
-		JSONObject callbackSell = EtcUtil.getOrdersNew(accessKey,secretKey,"0");
-		JSONArray sellList = JSONArray.fromObject(callbackSell);
+		JSONArray sellList = EtcUtil.getOrdersNew(accessKey,secretKey,"0");
 		for(int i=0; i<sellList.size(); i++){
 			JSONObject jsonObject = sellList.getJSONObject(i); 
-			OrderSellTable orderSell = (OrderSellTable) callbackSell.toBean(jsonObject, OrderSellTable.class);
+			OrderSellTable orderSell = (OrderSellTable) jsonObject.toBean(jsonObject, OrderSellTable.class);
 			saveOrUpdateOrderSellTable(orderSell);
 		}	
 	}
 	
 	public void saveOrUpdateOrderBuyTable(OrderBuyTable orderBuyTable){
-		this.getSessionFactory().getCurrentSession().saveOrUpdate(orderBuyTable);
+		OrderBuyTable oldData = getOrderBuyTable(orderBuyTable.getId());
+		if(oldData == null){
+			this.getSessionFactory().getCurrentSession().save(orderBuyTable);
+		}else{
+			orderBuyTable.setUuid(oldData.getUuid());;
+			this.getSessionFactory().getCurrentSession().update(orderBuyTable);
+		}
+			
 	}
 	
 	public void saveOrUpdateOrderSellTable(OrderSellTable orderSellTable){
-		this.getSessionFactory().getCurrentSession().saveOrUpdate(orderSellTable);
+		OrderSellTable oldData = getOrderSellTable(orderSellTable.getId());
+		if(oldData == null){
+			this.getSessionFactory().getCurrentSession().save(orderSellTable);
+		}else{
+			orderSellTable.setUuid(oldData.getUuid());
+			this.getSessionFactory().getCurrentSession().update(orderSellTable);
+		}
+	}
+	
+	public OrderBuyTable getOrderBuyTable(Long id){
+		return (OrderBuyTable) this.getSessionFactory().getCurrentSession().get(OrderBuyTable.class, id);
+	}
+	public OrderSellTable getOrderSellTable(Long id){
+		return (OrderSellTable) this.getSessionFactory().getCurrentSession().get(OrderSellTable.class, id);
 	}
 }

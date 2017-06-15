@@ -23,4 +23,6 @@ public interface EtcService {
 	public void syncOrdersNew(String accountId);
 	public void saveOrUpdateOrderBuyTable(OrderBuyTable orderBuyTable);
 	public void saveOrUpdateOrderSellTable(OrderSellTable orderSellTable);
+	public OrderBuyTable getOrderBuyTable(Long id);
+	public OrderSellTable getOrderSellTable(Long id);
 }

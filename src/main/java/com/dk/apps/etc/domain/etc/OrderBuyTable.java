@@ -7,7 +7,6 @@ import javax.persistence.Table;
 
 import com.dk.apps.etc.domain.BaseTable;
 
-
 @Entity
 @Table(name="orderBuy")
 public class OrderBuyTable extends BaseTable{

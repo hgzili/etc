@@ -8,9 +8,10 @@ import javax.persistence.Table;
 import com.dk.apps.etc.domain.BaseTable;
 
 
+
 @Entity
 @Table(name="orderSell")
-public class OrderSellTable extends BaseTable{
+public class OrderSellTable extends BaseTable{ 
 	private String currency; //交易类型（目前仅支持btc_cny/ltc_cny/eth_cny/eth_btc/etc_cny）
 	private Long id; //委托挂单号
 	private Double price; //单价
@@ -27,13 +28,13 @@ public class OrderSellTable extends BaseTable{
 	}
 	public void setCurrency(String currency) {
 		this.currency = currency;
-	}
-	public Long getId() {
+	}	public Long getId() {
 		return id;
 	}
 	public void setId(Long id) {
 		this.id = id;
 	}
+
 	public Double getPrice() {
 		return price;
 	}

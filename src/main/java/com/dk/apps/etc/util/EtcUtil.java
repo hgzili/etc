@@ -15,6 +15,7 @@ import com.dk.apps.etc.domain.etc.TickerTable;
 import com.dk.apps.etc.domain.etc.dummy.Ticker;
 import com.dk.apps.etc.util.sign.EncryDigestUtil;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
@@ -45,7 +46,7 @@ public class EtcUtil {
 			String url = URL_PREFIX+"order?" + params + "&sign=" + hash + "&reqTime=" + System.currentTimeMillis();
 //			System.out.println("testOrder url: " + url);
 			//请求测试
-			JSONObject callback = get(url, "UTF-8");
+			JSONObject callback = getJSONObject(url, "UTF-8");
 			return callback;
 //			System.out.println("testOrder 结果: " + callback);
 		}catch(Exception ex){
@@ -68,7 +69,7 @@ public class EtcUtil {
 			//请求地址
 			String url = URL_PREFIX+"cancelOrder?" + params + "&sign=" + hash + "&reqTime=" + System.currentTimeMillis();
 			//请求测试
-			JSONObject callback = get(url, "UTF-8");
+			JSONObject callback = getJSONObject(url, "UTF-8");
 			return callback;
 		}catch(Exception ex){
 			ex.printStackTrace();
@@ -83,7 +84,7 @@ public class EtcUtil {
 	 * pageSize  每页数量
 	 */
 	@Test
-	public static JSONObject getOrdersNew(String accessKey,String secretKey,String tradeType){
+	public static JSONArray getOrdersNew(String accessKey,String secretKey,String tradeType){
 		try{
 			String SECRET_KEY = EncryDigestUtil.digest(secretKey);	
 			//需加密的请求参数
@@ -96,7 +97,7 @@ public class EtcUtil {
 			//请求地址
 			String url = URL_PREFIX+"getOrdersNew?" + params + "&sign=" + hash + "&reqTime=" + System.currentTimeMillis();
 			//请求测试
-			JSONObject callback = get(url, "UTF-8");
+			JSONArray callback = getJSONArray(url, "UTF-8");
 			return callback;
 		}catch(Exception ex){
 			ex.printStackTrace();
@@ -113,7 +114,7 @@ public class EtcUtil {
 		TickerTable tickerData = new TickerTable();
 		try {
 			String url = API_DOMAIN+"/data/v1/ticker?currency="+currency;
-			JSONObject callback = get(url, "UTF-8");
+			JSONObject callback = getJSONObject(url, "UTF-8");
 			Ticker ticker = (Ticker) callback.toBean(callback, Ticker.class);
 			tickerData.setDate(ticker.getDate());
 			tickerData.setBuy(ticker.getTicker().getBuy());
@@ -137,7 +138,7 @@ public class EtcUtil {
 	public static JSONObject getDepth() {
 		try {
 			String url = API_DOMAIN+"/data/v1/depth?currency="+currency;
-			JSONObject callback = get(url, "UTF-8");
+			JSONObject callback = getJSONObject(url, "UTF-8");
 			return callback;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -153,7 +154,7 @@ public class EtcUtil {
 		try {
 			String url = API_DOMAIN+"/data/v1/trades?currency="+currency;
 			if(tid != null) url = url +"&since="+tid;
-			JSONObject callback = get(url, "UTF-8");
+			JSONObject callback = getJSONObject(url, "UTF-8");
 			return callback;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -183,7 +184,7 @@ public class EtcUtil {
 	public static JSONObject getKline(String type,Date since) {
 		try {
 			String url = API_DOMAIN+"/data/v1/kline?currency="+currency+"&type="+type+"&since="+since.toString();
-			JSONObject callback = get(url, "UTF-8");
+			JSONObject callback = getJSONObject(url, "UTF-8");
 			return callback;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -192,7 +193,7 @@ public class EtcUtil {
 	}
 	
 	
-	public static JSONObject get(String urlAll, String charset) {
+	public static JSONObject getJSONObject(String urlAll, String charset) {
 		BufferedReader reader = null;
 		JSONObject result = null;
 		StringBuffer sbf = new StringBuffer();
@@ -215,7 +216,36 @@ public class EtcUtil {
 			}
 			reader.close();
 			result = JSONObject.fromObject(sbf.toString());
-
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	
+	public static JSONArray getJSONArray(String urlAll, String charset) {
+		BufferedReader reader = null;
+		JSONArray result = null;
+		StringBuffer sbf = new StringBuffer();
+		String userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36";
+		try {
+			URL url = new URL(urlAll);
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
+			connection.setRequestMethod("GET");
+			connection.setReadTimeout(30000);
+			connection.setConnectTimeout(30000);
+			connection.setRequestProperty("User-agent", userAgent);
+			connection.connect();
+			InputStream is = connection.getInputStream();
+			reader = new BufferedReader(new InputStreamReader(is, charset));
+			String strRead = null;
+			while ((strRead = reader.readLine()) != null) {
+				sbf.append(strRead);
+				sbf.append("\r\n");
+			}
+			reader.close();
+			result = JSONArray.fromObject(sbf.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
