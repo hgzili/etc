@@ -1,11 +1,14 @@
 package com.dk.apps.etc.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
+import net.sf.ezmorph.object.DateMorpher;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.util.JSONUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -83,7 +86,7 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 		JSONArray list = JSONArray.fromObject(callback);
 		for(int i=0; i<list.size(); i++){
 			JSONObject jsonObject = list.getJSONObject(i); 
-			Trades trades = (Trades) callback.toBean(jsonObject, Trades.class);
+			Trades trades = (Trades) jsonObject.toBean(jsonObject, Trades.class);
 			if(trades.getType().equals("buy")){
 				TradesBuyTable tradesBuy = new TradesBuyTable();
 				tradesBuy.setTid(trades.getTid());
@@ -116,46 +119,49 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 		AccountInfo accountInfo = this.adminService.getAccountInfoByAccount(account);
 		String accessKey = accountInfo.getAccessKey();
 		String secretKey = accountInfo.getSecretKey();
-		JSONArray buyList = EtcUtil.getOrdersNew(accessKey,secretKey,"1");
+		JSONArray buyList = EtcUtil.getOrders(accessKey,secretKey,"1");
+		JSONUtils.getMorpherRegistry().registerMorpher(new TimestampToDateMorpher());
 		for(int i=0; i<buyList.size(); i++){
+			OrderBuyTable orderBuy = new OrderBuyTable();
 			JSONObject jsonObject = buyList.getJSONObject(i); 
-			OrderBuyTable orderBuy = (OrderBuyTable) jsonObject.toBean(jsonObject, OrderBuyTable.class);
+			orderBuy = (OrderBuyTable) JSONObject.toBean(jsonObject, OrderBuyTable.class);
 			saveOrUpdateOrderBuyTable(orderBuy);
 		}	
 		
-		JSONArray sellList = EtcUtil.getOrdersNew(accessKey,secretKey,"0");
+		JSONArray sellList = EtcUtil.getOrders(accessKey,secretKey,"0");
 		for(int i=0; i<sellList.size(); i++){
+			OrderSellTable orderSell = new OrderSellTable();
 			JSONObject jsonObject = sellList.getJSONObject(i); 
-			OrderSellTable orderSell = (OrderSellTable) jsonObject.toBean(jsonObject, OrderSellTable.class);
+			orderSell = (OrderSellTable) JSONObject.toBean(jsonObject, OrderSellTable.class);
 			saveOrUpdateOrderSellTable(orderSell);
 		}	
 	}
 	
 	public void saveOrUpdateOrderBuyTable(OrderBuyTable orderBuyTable){
 		OrderBuyTable oldData = getOrderBuyTable(orderBuyTable.getId());
-		if(oldData == null){
-			this.getSessionFactory().getCurrentSession().save(orderBuyTable);
-		}else{
-			orderBuyTable.setUuid(oldData.getUuid());;
-			this.getSessionFactory().getCurrentSession().update(orderBuyTable);
-		}
-			
+		if(oldData != null) orderBuyTable.setUuid(oldData.getUuid());
+		this.getSessionFactory().getCurrentSession().evict(oldData);
+		this.getSessionFactory().getCurrentSession().saveOrUpdate(orderBuyTable);
 	}
 	
 	public void saveOrUpdateOrderSellTable(OrderSellTable orderSellTable){
 		OrderSellTable oldData = getOrderSellTable(orderSellTable.getId());
-		if(oldData == null){
-			this.getSessionFactory().getCurrentSession().save(orderSellTable);
-		}else{
-			orderSellTable.setUuid(oldData.getUuid());
-			this.getSessionFactory().getCurrentSession().update(orderSellTable);
-		}
+		if(oldData != null) orderSellTable.setUuid(oldData.getUuid());;
+		this.getSessionFactory().getCurrentSession().evict(oldData);
+		this.getSessionFactory().getCurrentSession().saveOrUpdate(orderSellTable);
 	}
 	
 	public OrderBuyTable getOrderBuyTable(Long id){
-		return (OrderBuyTable) this.getSessionFactory().getCurrentSession().get(OrderBuyTable.class, id);
+		String sql = "from OrderBuyTable u where u.id=:id";
+		List<OrderBuyTable> list = this.getSessionFactory().getCurrentSession()
+				.createQuery(sql).setLong("id",id).list();
+		if(list == null || list.size()<=0) return null;
+		return (OrderBuyTable) list.get(0);
 	}
 	public OrderSellTable getOrderSellTable(Long id){
-		return (OrderSellTable) this.getSessionFactory().getCurrentSession().get(OrderSellTable.class, id);
-	}
+		String sql = "from OrderSellTable u where u.id=:id";
+		List<OrderSellTable> list = this.getSessionFactory().getCurrentSession()
+				.createQuery(sql).setLong("id",id).list();
+		if(list == null || list.size()<=0) return null;
+		return (OrderSellTable) list.get(0);	}
 }

@@ -13,7 +13,7 @@ public class OrderBuyTable extends BaseTable{
 	private String currency; //交易类型（目前仅支持btc_cny/ltc_cny/eth_cny/eth_btc/etc_cny）
 	private Long id; //委托挂单号
 	private Double price; //单价
-	private int status; //挂单状态(0：待成交,1：取消,2：交易完成,3：待成交未交易部份)
+	private String status; //挂单状态(0：待成交,1：取消,2：交易完成,3：待成交未交易部份)
 	private Double total_amount; //挂单总数量
 	private Double trade_amount; //已成交数量
 	private Date trade_date; //Unix时间戳
@@ -39,10 +39,10 @@ public class OrderBuyTable extends BaseTable{
 	public void setPrice(Double price) {
 		this.price = price;
 	}
-	public int getStatus() {
+	public String getStatus() {
 		return status;
 	}
-	public void setStatus(int status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 	public Double getTotal_amount() {

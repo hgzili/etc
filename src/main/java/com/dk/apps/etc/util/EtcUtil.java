@@ -84,14 +84,14 @@ public class EtcUtil {
 	 * pageSize  每页数量
 	 */
 	@Test
-	public static JSONArray getOrdersNew(String accessKey,String secretKey,String tradeType){
+	public static JSONArray getOrders(String accessKey,String secretKey,String tradeType){
 		try{
 			String SECRET_KEY = EncryDigestUtil.digest(secretKey);	
 			//需加密的请求参数
 			String params = "method=getOrdersNew&accesskey="+accessKey 
 					+ "&tradeType="+tradeType
 					+ "&currency="+currency
-					+ "&pageIndex=1&pageSize=100";
+					+ "&pageIndex=1&pageSize=20";
 			//参数执行加密
 			String hash = EncryDigestUtil.hmacSign(params, SECRET_KEY);
 			//请求地址
