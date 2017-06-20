@@ -139,15 +139,19 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 	
 	public void saveOrUpdateOrderBuyTable(OrderBuyTable orderBuyTable){
 		OrderBuyTable oldData = getOrderBuyTable(orderBuyTable.getId());
-		if(oldData != null) orderBuyTable.setUuid(oldData.getUuid());
-		this.getSessionFactory().getCurrentSession().evict(oldData);
+		if(oldData != null) {
+			orderBuyTable.setUuid(oldData.getUuid());
+			this.getSessionFactory().getCurrentSession().evict(oldData);
+		}
 		this.getSessionFactory().getCurrentSession().saveOrUpdate(orderBuyTable);
 	}
 	
 	public void saveOrUpdateOrderSellTable(OrderSellTable orderSellTable){
 		OrderSellTable oldData = getOrderSellTable(orderSellTable.getId());
-		if(oldData != null) orderSellTable.setUuid(oldData.getUuid());;
-		this.getSessionFactory().getCurrentSession().evict(oldData);
+		if(oldData != null) {
+			orderSellTable.setUuid(oldData.getUuid());
+			this.getSessionFactory().getCurrentSession().evict(oldData);
+		}
 		this.getSessionFactory().getCurrentSession().saveOrUpdate(orderSellTable);
 	}
 	
