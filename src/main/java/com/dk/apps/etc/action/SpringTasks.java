@@ -30,6 +30,11 @@ public class SpringTasks{
     void syncOrdersNew(){  
 //		etcService.syncOrdersNew("1");;
     }
+	
+	@Scheduled(cron = "0 * * * * *")  
+    void syncNetOrders(){  
+		etcService.syncNetOrders();
+    }
 
 	public EtcService getEtcService() {
 		return etcService;

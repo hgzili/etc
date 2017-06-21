@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dk.apps.etc.domain.AccountInfo;
 import com.dk.apps.etc.domain.etc.AsksTable;
 import com.dk.apps.etc.domain.etc.BidsTable;
+import com.dk.apps.etc.domain.etc.NetOrdersTable;
 import com.dk.apps.etc.domain.etc.OrderBuyTable;
 import com.dk.apps.etc.domain.etc.OrderSellTable;
 import com.dk.apps.etc.domain.etc.TickerTable;
@@ -139,8 +140,10 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 	
 	public void saveOrUpdateOrderBuyTable(OrderBuyTable orderBuyTable){
 		OrderBuyTable oldData = getOrderBuyTable(orderBuyTable.getId());
+		orderBuyTable.setInsertFlag(false);
 		if(oldData != null) {
 			orderBuyTable.setUuid(oldData.getUuid());
+			orderBuyTable.setInsertFlag(oldData.isInsertFlag());
 			this.getSessionFactory().getCurrentSession().evict(oldData);
 		}
 		this.getSessionFactory().getCurrentSession().saveOrUpdate(orderBuyTable);
@@ -148,6 +151,7 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 	
 	public void saveOrUpdateOrderSellTable(OrderSellTable orderSellTable){
 		OrderSellTable oldData = getOrderSellTable(orderSellTable.getId());
+		orderSellTable.setInsertFlag(false);
 		if(oldData != null) {
 			orderSellTable.setUuid(oldData.getUuid());
 			this.getSessionFactory().getCurrentSession().evict(oldData);
@@ -167,5 +171,54 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 		List<OrderSellTable> list = this.getSessionFactory().getCurrentSession()
 				.createQuery(sql).setLong("id",id).list();
 		if(list == null || list.size()<=0) return null;
-		return (OrderSellTable) list.get(0);	}
+		return (OrderSellTable) list.get(0);	
+	}
+	
+	public void syncNetOrders(){
+		String buySql = "from OrderBuyTable u where u.insertFlag=false and u.status = '2'";
+		List<OrderBuyTable> buyList = this.getSessionFactory().getCurrentSession()
+				.createQuery(buySql).list();
+		for(int i=0;i<buyList.size();i++){
+			OrderBuyTable orderBuy = buyList.get(i);
+			NetOrdersTable netOrdersTable = new NetOrdersTable();
+			netOrdersTable.setId(orderBuy.getId());
+			netOrdersTable.setTrade_price(orderBuy.getTrade_price());
+			netOrdersTable.setTrade_amount(orderBuy.getTrade_amount());
+			netOrdersTable.setTrade_money(orderBuy.getTrade_money());
+			netOrdersTable.setTrade_date(orderBuy.getTrade_date());
+			this.getSessionFactory().getCurrentSession().saveOrUpdate(netOrdersTable);
+			orderBuy.setInsertFlag(true);
+			this.getSessionFactory().getCurrentSession().saveOrUpdate(orderBuy);
+		}
+		
+		String sql = "from NetOrdersTable u order by trade_price";
+		List<NetOrdersTable> netList = this.getSessionFactory().getCurrentSession()
+				.createQuery(sql).list();
+		int netIndex = 0;
+		NetOrdersTable netOrdersTable = netList.get(netIndex);
+		
+		String sellSql = "from OrderSellTable u where u.insertFlag=false and u.status = '2'";
+		List<OrderSellTable> sellList = this.getSessionFactory().getCurrentSession()
+				.createQuery(sellSql).list();
+		for(int i=0;i<sellList.size();i++){
+			OrderSellTable orderSell = sellList.get(i);
+			if(orderSell.getTrade_amount() == netOrdersTable.getTrade_amount()){
+				this.getSessionFactory().getCurrentSession().delete(netOrdersTable);
+				continue;
+			}else if(orderSell.getTrade_amount() > netOrdersTable.getTrade_amount()){
+				Double netAmount = orderSell.getTrade_amount() - netOrdersTable.getTrade_amount();
+				this.getSessionFactory().getCurrentSession().delete(netOrdersTable);
+				while(netAmount > 0){
+					netIndex = netIndex + 1;
+					netOrdersTable = netList.get(netIndex);
+				}
+			}else{
+				
+			}
+			
+			this.getSessionFactory().getCurrentSession().saveOrUpdate(netOrdersTable);
+			orderSell.setInsertFlag(true);
+			this.getSessionFactory().getCurrentSession().saveOrUpdate(orderSell);
+		}
+	}
 }

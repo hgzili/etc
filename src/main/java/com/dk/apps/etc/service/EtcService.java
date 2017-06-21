@@ -25,4 +25,6 @@ public interface EtcService {
 	public void saveOrUpdateOrderSellTable(OrderSellTable orderSellTable);
 	public OrderBuyTable getOrderBuyTable(Long id);
 	public OrderSellTable getOrderSellTable(Long id);
+	
+	public void syncNetOrders();
 }

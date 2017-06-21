@@ -21,6 +21,7 @@ public class OrderBuyTable extends BaseTable{
 	private Double trade_price; //成交均价
 	private String type; //挂单类型 1/0[buy/sell]
 	private Double fees; //交易手续费,卖单的话,显示的是收入货币(如人民币);买单的话,显示的是买入货币(如etc)
+	private boolean insertFlag;
 	public String getCurrency() {
 		return currency;
 	}
@@ -86,5 +87,11 @@ public class OrderBuyTable extends BaseTable{
 	}
 	public void setFees(Double fees) {
 		this.fees = fees;
+	}
+	public boolean isInsertFlag() {
+		return insertFlag;
+	}
+	public void setInsertFlag(boolean insertFlag) {
+		this.insertFlag = insertFlag;
 	}
 }
