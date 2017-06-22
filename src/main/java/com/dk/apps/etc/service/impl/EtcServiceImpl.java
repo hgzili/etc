@@ -184,7 +184,6 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 			netOrdersTable.setId(orderBuy.getId());
 			netOrdersTable.setTrade_price(orderBuy.getTrade_price());
 			netOrdersTable.setTrade_amount(orderBuy.getTrade_amount());
-			netOrdersTable.setTrade_money(orderBuy.getTrade_money());
 			netOrdersTable.setTrade_date(orderBuy.getTrade_date());
 			this.getSessionFactory().getCurrentSession().saveOrUpdate(netOrdersTable);
 			orderBuy.setInsertFlag(true);
@@ -192,16 +191,15 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 		}
 		
 		String sql = "from NetOrdersTable u order by trade_price";
-		List<NetOrdersTable> netList = this.getSessionFactory().getCurrentSession()
-				.createQuery(sql).list();
-		int netIndex = 0;
-		NetOrdersTable netOrdersTable = netList.get(netIndex);
 		
 		String sellSql = "from OrderSellTable u where u.insertFlag=false and u.status = '2'";
 		List<OrderSellTable> sellList = this.getSessionFactory().getCurrentSession()
 				.createQuery(sellSql).list();
 		for(int i=0;i<sellList.size();i++){
 			OrderSellTable orderSell = sellList.get(i);
+			List<NetOrdersTable> netList = this.getSessionFactory().getCurrentSession()
+					.createQuery(sql).list();
+			NetOrdersTable netOrdersTable = netList.get(0);
 			if(orderSell.getTrade_amount() == netOrdersTable.getTrade_amount()){
 				this.getSessionFactory().getCurrentSession().delete(netOrdersTable);
 				continue;
@@ -209,14 +207,27 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 				Double netAmount = orderSell.getTrade_amount() - netOrdersTable.getTrade_amount();
 				this.getSessionFactory().getCurrentSession().delete(netOrdersTable);
 				while(netAmount > 0){
-					netIndex = netIndex + 1;
-					netOrdersTable = netList.get(netIndex);
+					netList = this.getSessionFactory().getCurrentSession()
+							.createQuery(sql).list();
+					netOrdersTable = netList.get(0);
+					if(netOrdersTable.getTrade_amount() == netAmount){
+						this.getSessionFactory().getCurrentSession().delete(netOrdersTable);
+						break;
+					}else if(netOrdersTable.getTrade_amount() > netAmount){
+						Double tempAmount = netOrdersTable.getTrade_amount() - netAmount;
+						netOrdersTable.setTrade_amount(tempAmount);
+						this.getSessionFactory().getCurrentSession().saveOrUpdate(netOrdersTable);
+						break;
+					}else{
+						this.getSessionFactory().getCurrentSession().delete(netOrdersTable);
+						netAmount = netAmount - netOrdersTable.getTrade_amount();
+					}
 				}
 			}else{
-				
+				Double tempAmount = netOrdersTable.getTrade_amount() - orderSell.getTrade_amount();
+				netOrdersTable.setTrade_amount(tempAmount);
+				this.getSessionFactory().getCurrentSession().saveOrUpdate(netOrdersTable);
 			}
-			
-			this.getSessionFactory().getCurrentSession().saveOrUpdate(netOrdersTable);
 			orderSell.setInsertFlag(true);
 			this.getSessionFactory().getCurrentSession().saveOrUpdate(orderSell);
 		}
