@@ -1,5 +1,7 @@
 package etc;
 
+import java.util.Date;
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -15,10 +17,9 @@ public class etcTest extends AbstractTransactionalJUnit4SpringContextTests{
 
 	@Test
 	public void testGetTicker() {
-//		EtcUtil.getDepth();
+		EtcUtil.getKline("1min",new Date());
 //		EtcService.syncDepth();
-		etcService.syncOrdersNew("1");
-		//5
+//		etcService.syncOrdersNew("1");
 //		TickerTable tickerTable = EtcUtil.getTicker();
 //		etcService.saveOrUpdateTickerTable(tickerTable);
 	}

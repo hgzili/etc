@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.logging.Log;
@@ -183,7 +184,7 @@ public class EtcUtil {
 	 */
 	public static JSONObject getKline(String type,Date since) {
 		try {
-			String url = API_DOMAIN+"/data/v1/kline?currency="+currency+"&type="+type+"&since="+since.toString();
+			String url = API_DOMAIN+"/data/v1/kline?currency="+currency+"&type="+type+"&since="+since.getTime();
 			JSONObject callback = getJSONObject(url, "UTF-8");
 			return callback;
 		} catch (Exception ex) {

@@ -28,10 +28,10 @@ public class SpringTasks{
 	
 	@Scheduled(cron = "0 * * * * *")  
     void syncOrdersNew(){  
-//		etcService.syncOrdersNew("1");;
+		etcService.syncOrdersNew("1");;
     }
 	
-	@Scheduled(cron = "0 * * * * *")  
+	@Scheduled(cron = "30 * * * * *")  
     void syncNetOrders(){  
 		etcService.syncNetOrders();
     }

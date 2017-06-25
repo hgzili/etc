@@ -154,6 +154,7 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 		orderSellTable.setInsertFlag(false);
 		if(oldData != null) {
 			orderSellTable.setUuid(oldData.getUuid());
+			orderSellTable.setInsertFlag(oldData.isInsertFlag());
 			this.getSessionFactory().getCurrentSession().evict(oldData);
 		}
 		this.getSessionFactory().getCurrentSession().saveOrUpdate(orderSellTable);
