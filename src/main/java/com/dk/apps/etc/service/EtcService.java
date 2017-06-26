@@ -1,5 +1,7 @@
 package com.dk.apps.etc.service;
 
+import java.util.Date;
+
 import com.dk.apps.etc.domain.etc.AsksTable;
 import com.dk.apps.etc.domain.etc.BidsTable;
 import com.dk.apps.etc.domain.etc.OrderBuyTable;
@@ -27,4 +29,6 @@ public interface EtcService {
 	public OrderSellTable getOrderSellTable(Long id);
 	
 	public void syncNetOrders();
+	
+	public void syncKline1min(Date sinceDate);
 }

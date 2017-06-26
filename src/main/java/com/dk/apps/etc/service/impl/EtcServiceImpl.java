@@ -233,4 +233,20 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 			this.getSessionFactory().getCurrentSession().saveOrUpdate(orderSell);
 		}
 	}
+	
+	public void syncKline1min(Date sinceDate){
+		JSONObject callback = EtcUtil.getKline("1min",sinceDate);
+		Depth depth = (Depth) callback.toBean(callback, Depth.class);
+		Double[][] asks = depth.getAsks();
+		Double[][] bids = depth.getBids();
+		
+		for(int i=0; i<asks.length; i++){
+			AsksTable asksTable = new AsksTable();
+			asksTable.setDate(depth.getTimestamp());
+			asksTable.setPrice(asks[i][0]);
+			asksTable.setAmount(asks[i][1]);
+			asksTable.setUdate(new Date());
+			saveOrUpdateAsksTable(asksTable);
+		}
+	}
 }
