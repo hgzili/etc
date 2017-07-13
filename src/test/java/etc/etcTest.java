@@ -18,8 +18,8 @@ public class etcTest extends AbstractTransactionalJUnit4SpringContextTests{
 	@Test
 	public void testGetTicker() {
 		EtcUtil.getKline("1min",new Date());
-//		EtcService.syncDepth();
-//		etcService.syncOrdersNew("1");
+//		etcService.syncDepth();
+		etcService.syncOrdersNew("1");
 //		TickerTable tickerTable = EtcUtil.getTicker();
 //		etcService.saveOrUpdateTickerTable(tickerTable);
 	}

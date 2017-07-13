@@ -21,19 +21,19 @@ public class SpringTasks{
 //		etcService.syncTicker();;
     }
 	
-	@Scheduled(cron = "30 * * * * *")  
+	@Scheduled(cron = "0 * * * * *")  
     void syncDepth(){  
 //		etcService.syncDepth();
     }
 	
-	@Scheduled(cron = "0 * * * * *")  
+	@Scheduled(cron = "50 * * * * *")  
     void syncOrdersNew(){  
-		etcService.syncOrdersNew("1");;
+//		etcService.syncOrdersNew("1");;
     }
 	
 	@Scheduled(cron = "30 * * * * *")  
     void syncNetOrders(){  
-		etcService.syncNetOrders();
+//		etcService.syncNetOrders();
     }
 
 	public EtcService getEtcService() {

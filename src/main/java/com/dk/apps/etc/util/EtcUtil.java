@@ -89,14 +89,14 @@ public class EtcUtil {
 		try{
 			String SECRET_KEY = EncryDigestUtil.digest(secretKey);	
 			//需加密的请求参数
-			String params = "method=getOrdersNew&accesskey="+accessKey 
-					+ "&tradeType="+tradeType
+			String params = "method=getOrdersIgnoreTradeType&accesskey="+accessKey 
+//					+ "&tradeType="+tradeType
 					+ "&currency="+currency
 					+ "&pageIndex=1&pageSize=20";
 			//参数执行加密
 			String hash = EncryDigestUtil.hmacSign(params, SECRET_KEY);
 			//请求地址
-			String url = URL_PREFIX+"getOrdersNew?" + params + "&sign=" + hash + "&reqTime=" + System.currentTimeMillis();
+			String url = URL_PREFIX+"getOrdersIgnoreTradeType?" + params + "&sign=" + hash + "&reqTime=" + System.currentTimeMillis();
 			//请求测试
 			JSONArray callback = getJSONArray(url, "UTF-8");
 			return callback;
