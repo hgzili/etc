@@ -85,12 +85,11 @@ public class EtcUtil {
 	 * pageSize  每页数量
 	 */
 	@Test
-	public static JSONArray getOrders(String accessKey,String secretKey,String tradeType){
+	public static JSONArray getOrders(String accessKey,String secretKey){
 		try{
 			String SECRET_KEY = EncryDigestUtil.digest(secretKey);	
 			//需加密的请求参数
 			String params = "method=getOrdersIgnoreTradeType&accesskey="+accessKey 
-//					+ "&tradeType="+tradeType
 					+ "&currency="+currency
 					+ "&pageIndex=1&pageSize=20";
 			//参数执行加密

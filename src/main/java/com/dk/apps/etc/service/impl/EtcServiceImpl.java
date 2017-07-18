@@ -120,21 +120,21 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 		AccountInfo accountInfo = this.adminService.getAccountInfoByAccount(account);
 		String accessKey = accountInfo.getAccessKey();
 		String secretKey = accountInfo.getSecretKey();
-		JSONArray buyList = EtcUtil.getOrders(accessKey,secretKey,"1");
+		JSONArray orderList = EtcUtil.getOrders(accessKey,secretKey);
 		JSONUtils.getMorpherRegistry().registerMorpher(new TimestampToDateMorpher());
-		for(int i=0; i<buyList.size(); i++){
-			OrderBuyTable orderBuy = new OrderBuyTable();
-			JSONObject jsonObject = buyList.getJSONObject(i); 
-			orderBuy = (OrderBuyTable) JSONObject.toBean(jsonObject, OrderBuyTable.class);
-			saveOrUpdateOrderBuyTable(orderBuy);
-		}	
-		
-		JSONArray sellList = EtcUtil.getOrders(accessKey,secretKey,"0");
-		for(int i=0; i<sellList.size(); i++){
-			OrderSellTable orderSell = new OrderSellTable();
-			JSONObject jsonObject = sellList.getJSONObject(i); 
-			orderSell = (OrderSellTable) JSONObject.toBean(jsonObject, OrderSellTable.class);
-			saveOrUpdateOrderSellTable(orderSell);
+		for(int i=0; i<orderList.size(); i++){
+			
+			JSONObject jsonObject = orderList.getJSONObject(i); 
+			if(jsonObject.get("type").toString().equals("1")){  //buy
+				OrderBuyTable orderBuy = new OrderBuyTable();
+				orderBuy = (OrderBuyTable) JSONObject.toBean(jsonObject, OrderBuyTable.class);
+				saveOrUpdateOrderBuyTable(orderBuy);
+			}else{
+				OrderSellTable orderSell = new OrderSellTable();
+				orderSell = (OrderSellTable) JSONObject.toBean(jsonObject, OrderSellTable.class);
+				saveOrUpdateOrderSellTable(orderSell);
+			}
+			
 		}	
 	}
 	
