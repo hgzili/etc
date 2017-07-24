@@ -137,7 +137,7 @@ public class EtcUtil {
 	 */
 	public static JSONObject getDepth() {
 		try {
-			String url = API_DOMAIN+"/data/v1/depth?currency="+currency;
+			String url = API_DOMAIN+"/data/v1/depth?currency="+currency+"&size=5";
 			JSONObject callback = getJSONObject(url, "UTF-8");
 			return callback;
 		} catch (Exception ex) {

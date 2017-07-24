@@ -55,6 +55,10 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 		Double[][] asks = depth.getAsks();
 		Double[][] bids = depth.getBids();
 		
+		Double bestSellPrice = bids[0][0];
+		Double bestBuyPrice = asks[0][4];
+		
+		/*
 		for(int i=0; i<asks.length; i++){
 			AsksTable asksTable = new AsksTable();
 			asksTable.setDate(depth.getTimestamp());
@@ -72,6 +76,7 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 			bidsTable.setUdate(new Date());
 			saveOrUpdateBidsTable(bidsTable);
 		}
+		*/
 	}
 	
 	public void saveOrUpdateAsksTable(AsksTable asksTable){
@@ -121,6 +126,7 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 		String accessKey = accountInfo.getAccessKey();
 		String secretKey = accountInfo.getSecretKey();
 		JSONArray orderList = EtcUtil.getOrders(accessKey,secretKey);
+		if(orderList == null) return;
 		JSONUtils.getMorpherRegistry().registerMorpher(new TimestampToDateMorpher());
 		for(int i=0; i<orderList.size(); i++){
 			
@@ -248,5 +254,14 @@ public class EtcServiceImpl extends BaseDaoHibernate implements EtcService {
 			asksTable.setUdate(new Date());
 			saveOrUpdateAsksTable(asksTable);
 		}
+	}
+	
+	public void translation(){
+		TickerTable tickerTable = EtcUtil.getTicker();
+		this.getSessionFactory().getCurrentSession().saveOrUpdate(tickerTable);
+		String countSql = "select count(*) from TickerTable t";
+		List list = this.getSessionFactory().getCurrentSession().createQuery(countSql).list();
+		if(Integer.parseInt(list.get(0).toString()) < 72) return;
+		
 	}
 }

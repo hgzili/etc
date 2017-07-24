@@ -31,4 +31,6 @@ public interface EtcService {
 	public void syncNetOrders();
 	
 	public void syncKline1min(Date sinceDate);
+	
+	public void translation();
 }
